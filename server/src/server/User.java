@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.json.simple.JSONObject;
 
 public class User {
     private static int nbUser = 0;
@@ -50,5 +55,13 @@ public class User {
 
     public String getColor() {
         return this.color;
+    }
+
+    public static Set<String> getUser(JSONObject jsonReturn, List<User> allUsers) {
+        Set<String> uniqueUsernames = new HashSet<>();
+        for (User user : allUsers) {
+            uniqueUsernames.add(user.getUsername());
+        }
+        return uniqueUsernames;
     }
 }

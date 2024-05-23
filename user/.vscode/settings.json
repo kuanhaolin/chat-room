@@ -1,0 +1,8 @@
+{
+    "java.home": "C:\\Program Files\\OpenLogic\\jdk-8.0.412.08-hotspot",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "json-simple-1.1.1.jar",
+        "C:\\Users\\User\\Desktop\\Java-socket-chatroom-0.2-alpha\\json-simple-1.1.1.jar"
+    ]
+}

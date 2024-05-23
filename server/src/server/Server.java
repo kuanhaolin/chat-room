@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Server {
 
@@ -62,9 +64,13 @@ public class Server {
 
                 // Send welcome message
                 JSONObject jsonReturn = new JSONObject();
-                jsonReturn.put("message", "Welcome to the server!");
-                newUser.getOutStream().println(jsonReturn.toString());
+                String threadCount = String.valueOf(User.getUser(jsonReturn, this.getAllThreads()).size());
 
+
+
+                jsonReturn.put("message", "Welcome to the server!");
+                jsonReturn.put("current_user", threadCount);
+                newUser.getOutStream().println(jsonReturn.toString());
             } catch (IOException ex) {
                 System.out.println("Failed accepting new user on port: " + this.port);
             }
@@ -73,15 +79,6 @@ public class Server {
 
     public List<User> getAllThreads() {
         return this.allThreads;
-    }
-
-    public User getThreadByName(String userName) {
-        for (User user : this.allThreads) {
-            if (user.getUsername().equals(userName)) {
-                return user;
-            }
-        }
-        return null;
     }
 
     public List<User> getThreadsByRoom(String room) {

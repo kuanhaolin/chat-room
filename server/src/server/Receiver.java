@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class Receiver implements Runnable {
 
-    private final User user;
+    public final User user;
     private final Server server;
     private String room = "";
 
@@ -31,7 +31,7 @@ public class Receiver implements Runnable {
     public void run() {
         try {
             Scanner in = new Scanner(this.user.getInputStream());
-
+            JSONObject jsonReturn;
             // While socket connection is still active
             while (!this.user.isSocketClosed()) {
                 if (in.hasNextLine()) {
@@ -42,10 +42,10 @@ public class Receiver implements Runnable {
 
                     // Send message
                     Command command = new Command(message, this.server);
-                    JSONObject jsonReturn;
+                    
                     if (command.isCommand()) {
-
-                        if (command.roomChange()) {// Get second word of command to change room name
+                        if (command.roomChange()) {
+                            // Get second word of command to change room name
                             try {
                                 this.room = message.split(" ")[1];
                                 this.user.setRoom(this.room);
@@ -66,25 +66,8 @@ public class Receiver implements Runnable {
                                 jsonReturn.put("message", "You are currently in room: " + this.room);
                                 sendMessage(jsonReturn.toString(), this.user);
                             }
-                        } else if (command.isDM()) {
-                            try {
-                                String[] splitMessage = message.split(" ");
-                                String userMessage = splitMessage[2];
-                                jsonReturn = new JSONObject();
-                                User selectedUser = this.server.getThreadByName(splitMessage[1]);
-                                if (selectedUser != null) {
-                                    jsonReturn.put("message", userMessage);
-                                    sendMessage(jsonReturn.toString(), selectedUser);
-                                } else {
-                                    jsonReturn.put("message", "User does not exist or is not online");
-                                    sendMessage(jsonReturn.toString(), this.user);
-                                }
-                            } catch (ArrayIndexOutOfBoundsException e) {
-                                jsonReturn = new JSONObject();
-                                jsonReturn.put("message", "Invalid dm format. Correct format: /dm {user_name} {message}");
-                                sendMessage(jsonReturn.toString(), this.user);
-                            }
-                        } else {// Server message
+                        } else {
+                            // Server message
                             jsonReturn = new JSONObject();
                             jsonReturn.put("message", command.getMessage());
                             sendMessage(jsonReturn.toString(), this.user);
@@ -118,11 +101,12 @@ public class Receiver implements Runnable {
      * @param message message to send
      * @param thread  to what user/thread the message should be send
      */
-    private void sendMessage(String message, User thread) {
+    public static void sendMessage(String message, User thread) {
         PrintStream userOut = thread.getOutStream();
         if (userOut != null) {
             userOut.println(message);
             userOut.flush();
+            System.out.println(message);
         }
     }
 }

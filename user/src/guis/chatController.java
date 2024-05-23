@@ -32,6 +32,7 @@ public class chatController implements Runnable {
 
     public VBox chatBox;
     public Label currentRoom;
+    public Label currentUser;
     public TextField messageInput;
 
     private final LinkedList<String> newMessages = new LinkedList<>();
@@ -61,7 +62,6 @@ public class chatController implements Runnable {
             PrintWriter serverOut = new PrintWriter(socket.getOutputStream(), false);
             InputStream serverInStream = socket.getInputStream();
             Scanner serverIn = new Scanner(serverInStream);
-
             // While socket connection is still active
             while (!socket.isClosed()) {
                 // If there is a new message from other users
@@ -103,13 +103,17 @@ public class chatController implements Runnable {
         Platform.runLater(() -> {
             try {
                 JSONObject json = (JSONObject) new JSONParser().parse(jsonString);
-
                 // Set values
                 String username = (String) json.get("username");
                 String userColor = (String) json.get("user_color");
                 String room = (String) json.get("room");
                 String message = (String) json.get("message");
                 String time = (String) json.get("time");
+                String currentUserNumber = (String) json.get("current_user");
+                System.out.println(message);
+                if (currentUserNumber != null) {
+                    currentUser.setText(currentUserNumber);
+                }
 
                 // Set room
                 if (room != null) {
@@ -137,7 +141,7 @@ public class chatController implements Runnable {
                 double width = (this.computeTextWidth(textArea.getFont(), textArea.getText()) + 10) + 20;
                 textArea.setPrefWidth(width);
 
-                int height = (textArea.getText().split("\r\n|\r|\n").length * 17) + 14;
+                int height = (textArea.getText().split("\r\n|\r|\n").length * 20) + 15;
                 textArea.setMinHeight(height);
                 textArea.setMaxHeight(height);
                 textArea.setEditable(false);
